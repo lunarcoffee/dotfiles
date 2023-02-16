@@ -1,0 +1,14 @@
+*
+!.gitignore
+!hypr/
+!hypr/*
+!nvim/
+!nvim/*
+!nvim/*/*
+nvim/plugin/packer_compiled.lua
+!waybar/
+!waybar/*
+!eww/
+!eww/*
+!eww/*/*
+*.swp

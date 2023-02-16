@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+query_workspaces() {
+    ws=$(hyprctl workspaces | rg "ID" | cut -d\  -f3 | sort -n | sed -z "s/\n/, /g") 
+    ws="{ \"ids\": [${ws::-2}], \"active\": \"$1\" }"
+}
+
+# Output current state
+echo_json() {
+    echo "{ \"workspaces\": $ws, \"active_title\": \"$title\" }"
+}
+
+# Obtain and output initial state
+query_workspaces $(hyprctl monitors | rg "e w" | cut -d\  -f3)
+title=$(hyprctl activewindow | rg "title" | cut -d: -f2 | tail -c+2)
+echo_json
+
+sock="UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+socat -u $sock - | while read -r line; do 
+    case $line in
+    workspace*)
+        query_workspaces ${line:11}
+        ;;
+    destroyworkspace*)
+        # For some reason, hyprctl sometimes won't update fast enough on the workspace event
+        w="${line:18}"
+        ws=$(echo "$ws" | sed "s/, $w//g" | sed "s/$w, //g")
+        ;;
+    focusedmon*)
+        query_workspaces $(echo "$line" | cut -d, -f2)
+        ;;
+    activewindow*)
+        title=$(echo "$line" | cut -d, -f2 | sed "s/\"/\\\\\"/g")
+        ;;
+    esac
+
+    echo_json
+done
+

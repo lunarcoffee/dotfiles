@@ -1,0 +1,42 @@
+* {
+    font-family: "SF Pro";
+    font-size: 13px;
+}
+
+window {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.main-bar {
+    padding: 0 6px;
+}
+
+.workspaces, .battery, .clock {
+    background: rgba(140, 140, 140, 0.35);
+    padding: 0 10px;
+    padding-top: 2px;
+    margin: 5px 3px;
+    border-radius: 50px;
+}
+
+.workspaces {
+    padding: 0 5px;
+}
+
+.clock {
+    font-feature-settings: "tnum";
+}
+
+.ws-button {
+    padding: 0 6px;
+    padding-top: 1px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    min-width: 9px;
+}
+
+.ws-button.active {
+    color: rgb(83, 193, 237);
+    font-weight: bold;
+}

@@ -1,0 +1,58 @@
+(defwindow main
+           :monitor 0
+           :geometry (geometry :x "0" :y "0"
+                               :width "1536px" :height "32px"
+                               :anchor "top center")
+           :stacking "fg"
+           :windowtype "dock"
+           :exclusive true
+
+  (centerbox :class "main-bar"
+    (box :space-evenly false
+      (workspaces))
+    (window-title)
+    (box :space-evenly false
+         :halign "end"
+      (battery)
+      (clock))))
+
+;; Clock widget
+
+(defpoll time :interval "1s"
+  `date +"%H:%M:%S"`)
+
+(defwidget clock []
+  (box :orientation "horizontal"
+       :halign "end"
+       :class "clock"
+    { time }))
+
+;; Battery widget
+
+(defwidget battery []
+  (box :orientation "horizontal"
+       :halign "end"
+       :class "battery"
+    "${EWW_BATTERY["BAT0"].capacity}%"))
+
+;; Hyprland info widgets
+
+(deflisten hypr-info
+  `~/.config/eww/scripts/listen_hyprland`)
+
+(defwidget workspaces []
+  (box :orientation "horizontal"
+       :halign "start"
+       :space-evenly false
+       :class "workspaces"
+    (for ws in { hypr-info["workspaces"]["ids"] }
+      (button :onclick "hyprctl dispatch workspace ${ws}"
+              :class { "ws-button" + (ws == hypr-info["workspaces"]["active"] ? " active" : "") }
+        { ws }))))
+
+(defwidget window-title []
+  (box :orientation "horizontal"
+       :halign "center"
+       :hexpand true
+       :class "title"
+    { hypr-info["active_title"] }))
