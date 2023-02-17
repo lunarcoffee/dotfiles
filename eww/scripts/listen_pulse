@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+poll_speaker() {
+    speaker=$(pactl get-sink-volume @DEFAULT_SINK@ | rg -o "\d+%" | head -1)
+    { pactl get-sink-mute @DEFAULT_SINK@ | rg no > /dev/null; } && silent=false || silent=true
+}
+
+echo_json() {
+    echo "{ \"speaker\": { \"volume\": ${speaker::-1}, \"muted\": $silent } }"
+}
+
+# Output initial values
+poll_speaker
+echo_json
+
+pactl subscribe | while read -r line; do
+    [[ $line =~ sink ]] && poll_speaker
+
+    echo_json
+done

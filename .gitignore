@@ -2,6 +2,7 @@
 !.gitignore
 !hypr/
 !hypr/*
+!hypr/*/*
 !nvim/
 !nvim/*
 !nvim/*/*

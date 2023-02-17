@@ -1,6 +1,5 @@
 * {
     font-family: "SF Pro";
-    font-size: 13px;
 }
 
 window {
@@ -11,32 +10,108 @@ window {
     padding: 0 6px;
 }
 
-.workspaces, .battery, .clock {
+.workspaces, .battery, .clock, .network, .audio, .temperature, .memory, .brightness {
     background: rgba(140, 140, 140, 0.35);
     padding: 0 10px;
-    padding-top: 2px;
+    padding-top: 1px;
     margin: 5px 3px;
     border-radius: 50px;
+    font-size: 13px;
 }
+
+.title {
+    font-size: 13px;
+}
+
+.battery {
+    padding-top: 0;
+    padding-right: 2px;
+}
+
+.battery-low {
+    color: #ff9b4f;
+}
+
+.battery-text {
+    padding: 2px 6px 0 0;
+}
+
+.battery-icon {
+    font-size: 14px;
+    padding: 1px 9px 0 0;
+}
+
+.battery-charging-icon {
+    font-size: 14px;
+    padding: 1px 12px 0 0;
+}
+
+.audio {
+    padding-top: 0;
+}
+
+.speaker-text {
+    padding-top: 2px;
+}
+
+.speaker-icon {
+    font-size: 15px;
+}
+
+.speaker-0 { padding: 1px 3px 0 7px; }
+.speaker-1 { padding: 1px 0 0 5px; }
+.speaker-2 { padding: 1px 0 0 7px; }
+.speaker-3 { padding: 1px 1px 0 7px; }
 
 .workspaces {
-    padding: 0 5px;
-}
-
-.clock {
-    font-feature-settings: "tnum";
+    padding: 0 7px;
 }
 
 .ws-button {
-    padding: 0 6px;
-    padding-top: 1px;
+    padding: 1px 3px 0 3px;
     background: transparent;
     border: none;
     border-radius: 0;
-    min-width: 9px;
 }
 
 .ws-button.active {
     color: rgb(83, 193, 237);
-    font-weight: bold;
 }
+
+.temp-icon {
+    font-size: 15px;
+    padding: 0 0 0 6px;
+}
+
+.memory-icon {
+    font-size: 15px;
+    padding: 0 2px 0 6px;
+}
+
+.brightness-icon {
+    font-size: 13px;
+    padding: 0 4px 0 6px;
+}
+
+.network {
+    padding-top: 1px;
+    padding-right: 15px;
+}
+
+.bt-icon {
+    padding-left: 1px;
+}
+
+.eth-icon, .wl-icon {
+    padding-left: 8px;
+}
+
+.eth-icon {
+    padding-right: 2px;
+}
+
+.clock {
+    font-feature-settings: "tnum";
+    padding-right: 11px;
+}
+

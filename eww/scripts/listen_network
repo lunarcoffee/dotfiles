@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+interface_state() {
+    echo $1 | rg "$2: .* state UP" | rg -o "$2"
+}
+
+wl=$(interface_state "$(ip link)" wlp2s0)
+eth=$(interface_state "$(ip link)" eth0) # TODO: is this the right interface name
+
+echo $wl $eth
+
+ip monitor link | while read -r line; do
+    wl_part=$(echo $line | rg "wlp2s0: .* state (DOWN|UP)")
+    [ ! -z "$wl_part" ] && wl=$(interface_state "$line" wlp2s0)
+
+    eth_part=$(echo $line | rg "eth0: .* state (DOWN|UP)")
+    [ ! -z "$eth_part" ] && eth=$(interface_state "$line" eth0)
+
+    echo $wl $eth
+done

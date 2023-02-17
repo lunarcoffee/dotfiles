@@ -30,7 +30,7 @@ socat -u $sock - | while read -r line; do
         query_workspaces $(echo "$line" | cut -d, -f2)
         ;;
     activewindow*)
-        title=$(echo "$line" | cut -d, -f2 | sed "s/\"/\\\\\"/g")
+        title=$(echo "$line" | rg -o ",.*" | tail -c+2 | sed "s/\"/\\\\\"/g")
         ;;
     esac
 
