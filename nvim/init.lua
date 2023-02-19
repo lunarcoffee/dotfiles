@@ -33,6 +33,9 @@ vim.opt.cot = 'menu,menuone,noselect'
 -- packer.nvim
 require 'plugins'
 
+require 'leap'.add_default_mappings()
+require 'Comment'.setup()
+
 -- Enable theme transparency before nvim-transparent
 require 'tokyonight'.setup {
     style = 'night',

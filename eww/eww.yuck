@@ -23,33 +23,38 @@
 
 (defpoll time :interval "0.1s" `date +"%H:%M:%S"`)
 
+(defvar calendar-open false)
+
 (defwidget clock []
-  (box :class "clock" { time }))
+  (eventbox :onclick { calendar-open ? "${EWW_CMD} update calendar-open=false && eww close calendar"
+                                     : "${EWW_CMD} update calendar-open=true && eww open calendar" }
+    (box :class "clock" { time })))
 
-;; ACPI info widgets (battery, backlight brightness)
+;; Power-related widgets (battery, backlight brightness)
 
-(deflisten acpi :initial '{ "brightness": "0%", "charging": false }'
-  `~/.config/eww/scripts/listen_acpi`)
+(deflisten acpi :initial '{ "charging": false }' `~/.config/eww/scripts/listen_acpi`)
 
 (defvar battery-icons '["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]')
 (defvar battery-charging-icons '["󰢟", "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"]')
 
 (defwidget battery []
   (box :space-evenly false
-       :class { "battery " + (EWW_BATTERY["BAT0"].capacity <= 15 ? "battery-low" : "") }
-    (box :class "battery-text" "${EWW_BATTERY["BAT0"].capacity}%")
+       :class { "battery " + (EWW_BATTERY.BAT0.capacity <= 15 ? "battery-low" : "") }
+    (box :class "battery-text" "${EWW_BATTERY.BAT0.capacity}%")
     (box :class { acpi.charging ? "battery-charging-icon" : "battery-icon" }
       "${(acpi.charging ? battery-charging-icons : battery-icons)
-           [round(EWW_BATTERY["BAT0"].capacity / 10, 0)]}")))
+           [round(EWW_BATTERY.BAT0.capacity / 10, 0)]}")))
+
+(deflisten br `tail -f ~/.config/eww/state/brightness`)
 
 (defvar brightness-icons '["󰃞", "󰃟", "󰃠"]')
 
 (defwidget brightness []
   (box :space-evenly false
        :class "brightness"
-    { acpi.brightness }
+    { br }
     (box :class "brightness-icon" 
-      { brightness-icons[round(replace(acpi.brightness, "%", "") / 50, 0)] })))
+      { brightness-icons[round(replace(br, "%", "") / 50, 0)] })))
 
 ;; Connectivity overview widget (Bluetooth, network)
 
@@ -63,9 +68,9 @@
        :class "network"
     (box :class "bt-icon" { bt == "no" ? "󰂲" : "󰂯" })
     (box :class "eth-icon"
-         :visible { matches(nw, 'eth0') }
+         :visible { matches(nw, "enp") }
       "󰈀")
-    (box :class "wl-icon" { matches(nw, "wlp2s0") ? "󱚿" : "󱘖" })))
+    (box :class "wl-icon" { matches(nw, "wlp") ? "󱚿" : "󱘖" })))
 
 ;; PulseAudio state widget
 
@@ -102,7 +107,8 @@
 (defwidget window-title []
   (box :hexpand true
        :class "title"
-    { hypr["active_title"] }))
+    (label :text { hypr.active_title } 
+           :limit-width 90)))
 
 ;; System resource info widgets
 
@@ -123,3 +129,37 @@
     "${round((ram-total - ram-avail) / ram-total * 100, 0)}%"
     (box :class "memory-icon" "󰍛")))
 
+;; Clock widget popup calendar window
+
+(defwindow calendar
+           :monitor 0
+           :geometry (geometry :x "8px" :y "8px" 
+                               :width "200px" :height "200px" 
+                               :anchor "top right")
+           :stacking "fg"
+           :windowtype "dock"
+           :exclusive false
+  
+  (calendar :show-heading true))
+
+;; This seems scuffed
+(defwindow main-2
+           :monitor 1
+           :geometry (geometry :width "1536px" :height "32px" :anchor "top center")
+           :stacking "fg"
+           :windowtype "dock"
+           :exclusive true
+
+  (centerbox :class "main-bar"
+    (box :space-evenly false
+      (workspaces)
+      (memory)
+      (temperature))
+    (window-title)
+    (box :space-evenly false
+         :halign "end"
+      (brightness)
+      (audio)
+      (overview)
+      (battery)
+      (clock))))

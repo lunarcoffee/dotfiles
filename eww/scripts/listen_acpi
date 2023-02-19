@@ -1,24 +1,15 @@
 #!/usr/bin/env bash
 
-# why won't inotify work... T-T
-
-poll_brightness() {
-    sleep 0.05  # This takes a bit to update it seems
-    brightness=$(brightnessctl | rg urrent | rg -o "\d+%")
-}
-
 echo_json() {
-    echo "{ \"brightness\": \"$brightness\", \"charging\": $ac }"
+    echo "{ \"charging\": $ac }"
 }
 
 [ $(cat /sys/class/power_supply/AC0/online) -eq 0 ] && ac=false || ac=true
-poll_brightness
 echo_json
 
 acpi_listen | while read -r line; do
     { echo $line | rg ac_adapter > /dev/null; } && \
         { { echo $line | rg "ac_adapter .* 00000001" > /dev/null; } && ac=true || ac=false; }
-    { echo $line | rg video/brightness > /dev/null; } && poll_brightness
 
     echo_json
 done

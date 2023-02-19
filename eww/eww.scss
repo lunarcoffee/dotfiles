@@ -3,24 +3,48 @@
 }
 
 window {
-    background: rgba(0, 0, 0, 0.5);
+    background: transparent;
+}
+
+window.calendar {
+    background: transparent;
+}
+
+calendar {
+    padding: 5px 3px;
+}
+
+calendar.view {
+    border: 1px solid #333;
+    border-radius: 10px;
+}
+
+calendar.header {
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
 }
 
 .main-bar {
     padding: 0 6px;
+    margin-top: 4px;
+    margin-bottom: 0;
 }
 
-.workspaces, .battery, .clock, .network, .audio, .temperature, .memory, .brightness {
-    background: rgba(140, 140, 140, 0.35);
+.workspaces, .battery, .clock, .network, .audio, .temperature, .memory, .brightness, .title {
+    background: rgb(40, 40, 40);
+    border: solid 1px #393939;
     padding: 0 10px;
     padding-top: 1px;
-    margin: 5px 3px;
+    margin: 5px 3px 0 3px;
     border-radius: 50px;
     font-size: 13px;
 }
 
 .title {
     font-size: 13px;
+    border: none;
+    background: transparent;
 }
 
 .battery {
@@ -37,13 +61,13 @@ window {
 }
 
 .battery-icon {
-    font-size: 14px;
-    padding: 1px 9px 0 0;
+    font-size: 13px;
+    padding: 1px 8px 0 0;
 }
 
 .battery-charging-icon {
-    font-size: 14px;
-    padding: 1px 12px 0 0;
+    font-size: 13px;
+    padding: 1px 11px 0 0;
 }
 
 .audio {
@@ -75,7 +99,7 @@ window {
 }
 
 .ws-button.active {
-    color: rgb(83, 193, 237);
+    color: #b496fa;
 }
 
 .temp-icon {
@@ -90,7 +114,7 @@ window {
 
 .brightness-icon {
     font-size: 13px;
-    padding: 0 4px 0 6px;
+    padding: 0 3.5px 0 6px;
 }
 
 .network {
