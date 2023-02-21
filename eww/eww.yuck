@@ -72,6 +72,9 @@
        :class "network"
     (box :class "bt-icon"
       (eventbox :onclick "blueman-manager &"
+                ;; This is so immensely terrible but I can't be bothered rn
+                :onrightclick { "sudo -S rfkill toggle bluetooth < ~/.config/eww/state/password 2> /dev/null ;" +
+                                "eww update bt=${bt == "yes" ? "no" : "yes"}" }
         { bt == "no" ? "󰂲" : "󰂯" }))
     (box :class "eth-icon"
          :visible { matches(nw.up, "enp") }

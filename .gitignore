@@ -12,6 +12,7 @@ nvim/plugin/packer_compiled.lua
 !eww/
 !eww/*
 !eww/*/*
+eww/state/password
 eww/state/*
 !kitty/
 !kitty/*
