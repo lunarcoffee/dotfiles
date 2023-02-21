@@ -12,10 +12,11 @@ window.calendar {
 
 calendar {
     padding: 5px 3px;
+    background: hsl(258deg 0% 19%);
 }
 
 calendar.view {
-    border: 1px solid #333;
+    border: solid 1px hsl(258deg 0% 25%);
     border-radius: 10px;
 }
 
@@ -32,8 +33,9 @@ calendar.header {
 }
 
 .workspaces, .battery, .clock, .network, .audio, .temperature, .memory, .brightness, .title {
-    background: rgb(40, 40, 40);
-    border: solid 1px #393939;
+    background: hsl(258deg 0% 19%);
+    color: #e0e0e0;
+    border: solid 1px hsl(258deg 0% 25%);
     padding: 0 10px;
     padding-top: 1px;
     margin: 5px 3px 0 3px;
@@ -96,10 +98,11 @@ calendar.header {
     background: transparent;
     border: none;
     border-radius: 0;
+    color: #e0e0e0;
 }
 
 .ws-button.active {
-    color: #b496fa;
+    color: hsl(258deg 100% 80%);
 }
 
 .temp-icon {
@@ -119,7 +122,7 @@ calendar.header {
 
 .network {
     padding-top: 1px;
-    padding-right: 15px;
+    padding-right: 11px;
 }
 
 .bt-icon {
@@ -128,6 +131,10 @@ calendar.header {
 
 .eth-icon, .wl-icon {
     padding-left: 8px;
+}
+
+.wl-icon {
+    padding-right: 4px;
 }
 
 .eth-icon {

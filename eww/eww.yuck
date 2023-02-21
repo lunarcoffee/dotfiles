@@ -22,30 +22,33 @@
 ;; Clock widget
 
 (defpoll time :interval "0.1s" `date +"%H:%M:%S"`)
+(defpoll date :interval "2s" `date +"%A %B %d, %Y"`)
 
 (defvar calendar-open false)
 
 (defwidget clock []
   (eventbox :onclick { calendar-open ? "${EWW_CMD} update calendar-open=false && eww close calendar"
                                      : "${EWW_CMD} update calendar-open=true && eww open calendar" }
-    (box :class "clock" { time })))
+    (box :class "clock" :tooltip date time)))
 
 ;; Power-related widgets (battery, backlight brightness)
 
 (deflisten acpi :initial '{ "charging": false }' `~/.config/eww/scripts/listen_acpi`)
+(defpoll time-left :interval "15s" `acpi -b | rg -o "\\d+:\\d+" | ~/.config/eww/scripts/time_to_words`)
 
 (defvar battery-icons '["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]')
 (defvar battery-charging-icons '["󰢟", "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"]')
 
 (defwidget battery []
   (box :space-evenly false
+       :tooltip { time-left == "" ? "Time left unavailable" : "${time-left} left" }
        :class { "battery " + (EWW_BATTERY.BAT0.capacity <= 15 ? "battery-low" : "") }
     (box :class "battery-text" "${EWW_BATTERY.BAT0.capacity}%")
     (box :class { acpi.charging ? "battery-charging-icon" : "battery-icon" }
       "${(acpi.charging ? battery-charging-icons : battery-icons)
            [round(EWW_BATTERY.BAT0.capacity / 10, 0)]}")))
 
-(deflisten br `tail -f ~/.config/eww/state/brightness`)
+(deflisten br :initial 0 `tail -f ~/.config/eww/state/brightness`)
 
 (defvar brightness-icons '["󰃞", "󰃟", "󰃠"]')
 
@@ -61,16 +64,22 @@
 ;; TODO: surely there's a better way
 (defpoll bt :interval "5s" `bluetoothctl show | rg Powered | cut -d\\  -f2`)
 
-(deflisten nw `~/.config/eww/scripts/listen_network`)
+(deflisten nw :initial '{ "up": "", "wl_ssid": "" }'
+  `~/.config/eww/scripts/listen_network`)
 
 (defwidget overview []
   (box :space-evenly false
        :class "network"
-    (box :class "bt-icon" { bt == "no" ? "󰂲" : "󰂯" })
+    (box :class "bt-icon"
+      (eventbox :onclick "blueman-manager &"
+        { bt == "no" ? "󰂲" : "󰂯" }))
     (box :class "eth-icon"
-         :visible { matches(nw, "enp") }
+         :visible { matches(nw.up, "enp") }
       "󰈀")
-    (box :class "wl-icon" { matches(nw, "wlp") ? "󱚿" : "󱘖" })))
+    (eventbox :onclick "gnome-control-center wifi &"
+      (box :class "wl-icon"
+           :tooltip { matches(nw.up, "wlan") ? nw.wl_ssid : "Disconnected" }
+        { matches(nw, "wlan") ? "󱚿" : "󱘖" }))))
 
 ;; PulseAudio state widget
 
@@ -81,15 +90,16 @@
 (defvar speaker-classes '["speaker-0", "speaker-1", "speaker-2", "speaker-3"]')
 
 (defwidget audio []
-  (box :space-evenly false
-       :class "audio"
-    (box :class "speaker-text" "${pa.speaker.volume}%")
-    (box :class "speaker-icon speaker-0"
-         :visible { pa.speaker.muted }
-      "󰝟")
-    (box :class { "speaker-icon " + speaker-classes[round(pa.speaker.volume / 34 + 0.49, 0)] }
-         :visible { !pa.speaker.muted }
-      { speaker-icons[round(pa.speaker.volume / 34 + 0.49, 0)] })))
+  (eventbox :onclick "pavucontrol &"
+    (box :space-evenly false
+         :class "audio"
+      (box :class "speaker-text" "${pa.speaker.volume}%")
+      (box :class "speaker-icon speaker-0"
+           :visible { pa.speaker.muted }
+        "󰝟")
+      (box :class { "speaker-icon " + speaker-classes[round(pa.speaker.volume / 34 + 0.49, 0)] }
+           :visible { !pa.speaker.muted }
+        { speaker-icons[round(pa.speaker.volume / 34 + 0.49, 0)] }))))
 
 ;; Hyprland info widgets
 
@@ -108,11 +118,12 @@
   (box :hexpand true
        :class "title"
     (label :text { hypr.active_title } 
-           :limit-width 90)))
+           :limit-width 90
+           :tooltip { hypr.active_title })))
 
 ;; System resource info widgets
 
-(defpoll temp :interval "10s" `sensors | rg temp1 | rg -o "\\d+.\\d+" | head -1`)
+(defpoll temp :initial 30 :interval "10s" `sensors | rg temp1 | rg -o "\\d+.\\d+" | head -1`)
 
 (defwidget temperature []
   (box :space-evenly false
@@ -120,11 +131,13 @@
     "${round(temp, 0)}°C"
     (box :class "temp-icon" "󰈸")))
 
-(defpoll ram-avail :interval "10s" `cat /proc/meminfo | rg MemAvailable | rg -o "\\d+"`)
-(defpoll ram-total :interval "10s" `cat /proc/meminfo | rg MemTotal | rg -o "\\d+"`)
+(defpoll ram-avail :initial 1 :interval "10s" `cat /proc/meminfo | rg MemAvailable | rg -o "\\d+"`)
+(defpoll ram-total :initial 1 :interval "10s" `cat /proc/meminfo | rg MemTotal | rg -o "\\d+"`)
 
 (defwidget memory []
   (box :space-evenly false
+       :tooltip { "${round((ram-total - ram-avail) / (1024 * 1024), 2)} GiB out of " +
+                  "${round(ram-total / (1024 * 1024), 2)} GiB used" }
        :class "memory"
     "${round((ram-total - ram-avail) / ram-total * 100, 0)}%"
     (box :class "memory-icon" "󰍛")))
@@ -137,7 +150,7 @@
                                :width "200px" :height "200px" 
                                :anchor "top right")
            :stacking "fg"
-           :windowtype "dock"
+           :windowtype "dialog"
            :exclusive false
   
   (calendar :show-heading true))

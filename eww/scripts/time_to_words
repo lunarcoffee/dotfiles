@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+sed "s/:/ hours, /" | sed -E "s/, (.*)/, \1 minutes/" | \
+    sed "s/00 hours, //" | sed "s/, 00 minutes//" | \
+    sed -E "s/0([1-9])/\1/g" | \
+    sed "s/^1 hours/1 hour/" | sed -E "s/([^\d]*)1 minutes/\11 minute/"
+

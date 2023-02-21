@@ -4,17 +4,26 @@ interface_state() {
     echo $1 | rg "$2.*: .* state UP" | rg -o "$2"
 }
 
-wl=$(interface_state "$(ip link)" wlp)
-eth=$(interface_state "$(ip link)" enp) # TODO: is this the right interface name
+fetch_wl_ssid() {
+    wl_ssid=$(nmcli | rg "^wlan" | cut -d: -f2 | sed "s/ connected to //")
+}
 
-echo $wl $eth
+echo_json() {
+    echo "{ \"up\": \"$wl $eth\", \"wl_ssid\": \"$wl_ssid\" }"
+}
+
+wl=$(interface_state "$(ip link)" wlan)
+eth=$(interface_state "$(ip link)" enp) # TODO: is this the right interface name
+fetch_wl_ssid
+
+echo_json
 
 ip monitor link | while read -r line; do
-    wl_part=$(echo $line | rg "wlp.*: .* state (DOWN|UP)")
-    [ ! -z "$wl_part" ] && wl=$(interface_state "$line" wlp)
+    wl_part=$(echo $line | rg "wlan.*: .* state (DOWN|UP)")
+    [ ! -z "$wl_part" ] && wl=$(interface_state "$line" wlan)
 
     eth_part=$(echo $line | rg "enp.*: .* state (DOWN|UP)")
     [ ! -z "$eth_part" ] && eth=$(interface_state "$line" enp)
 
-    echo $wl $eth
+    echo_json
 done
