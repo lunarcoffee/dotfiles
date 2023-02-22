@@ -12,11 +12,11 @@ window.calendar {
 
 calendar {
     padding: 5px 3px;
-    background: hsl(258deg 0% 19%);
+    background: hsl(258deg 0% 22%);
 }
 
 calendar.view {
-    border: solid 1px hsl(258deg 0% 25%);
+    border: solid 1px hsl(258deg 0% 28%);
     border-radius: 10px;
 }
 
@@ -33,9 +33,9 @@ calendar.header {
 }
 
 .workspaces, .battery, .clock, .network, .audio, .temperature, .memory, .brightness, .title {
-    background: hsl(258deg 0% 19%);
+    background: hsl(258deg 0% 22%);
     color: #e0e0e0;
-    border: solid 1px hsl(258deg 0% 25%);
+    border: solid 1px hsl(258deg 0% 28%);
     padding: 0 10px;
     padding-top: 1px;
     margin: 5px 3px 0 3px;
