@@ -36,9 +36,10 @@ socat -u $sock - | while read -r line; do
     focusedmon*)
         query_workspaces $(echo "$line" | cut -d, -f2)
         ;;
-    activewindow*)
+    activewindow\>*)
         # That first sed replaces literal '\' with a literal '\\\\', escaped twice since JSON and eww decoding remove one layer each
         title=$(echo "$line" | rg -o ",.*" | tail -c+2 | sed "s/\\\\/\\\\\\\\\\\\\\\\/g" | sed "s/\"/\\\\\"/g")
+        echo $line
         ;;
     esac
 
