@@ -33,6 +33,7 @@ return require("packer").startup(function(use)
 
     -- schmovement
     use "ggandor/leap.nvim"
+    use { 'echasnovski/mini.animate', branch = 'stable' }
 
     -- pretty colors
     use "folke/tokyonight.nvim" 

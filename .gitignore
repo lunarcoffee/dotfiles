@@ -17,3 +17,5 @@ eww/state/*
 !kitty/
 !kitty/*
 *.swp
+!wofi/
+!wofi/*

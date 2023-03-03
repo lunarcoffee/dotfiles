@@ -1,0 +1,38 @@
+window {
+    background: rgba(20, 20, 20, 0.7);
+    border-radius: 13px;
+    border: 2.5px solid rgba(180, 150, 250, 0.5);
+}
+
+#outer-box {
+    padding: 4px;
+    padding-bottom: 2.5px;
+}
+
+#input {
+    padding: 4px;
+    border: none;
+    background: transparent;
+    margin: 0 5px 0 5px;
+}
+
+#inner-box {
+    padding: 0 5px;
+}
+
+#entry {
+    padding: 5px 7px;
+    border-radius: 8px;
+}
+
+#entry:selected {
+    background: rgba(147, 122, 204, 0.66);
+}
+
+#text {
+    margin-left: 6px;
+}
+
+expander arrow {
+    margin: 0 4px 0 0;
+}

@@ -1,7 +1,13 @@
 vim.g.mapleader = ' '
 
-vim.opt.guifont = { 'JetBrains Mono', ':h10' }
+vim.opt.guifont = { 'JetBrainsMono NF', ':h10' }
 vim.opt.termguicolors = true
+
+vim.g.neovide_transparency = 0.6
+vim.g.neovide_padding_top = 18
+vim.g.neovide_padding_right = 24
+vim.g.neovide_padding_bottom = 16
+vim.g.neovide_padding_left = 24
 
 -- Hybrid line numbers
 vim.opt.relativenumber = true
@@ -11,10 +17,8 @@ vim.opt.rnu = true
 vim.opt.wrap = false
 vim.opt.showmode = false
 
---vim.opt.mouse = nil
-
 vim.opt.scrolloff = 5
-vim.opt.sidescrolloff = 10
+vim.opt.sidescrolloff = 5
 
 -- Don't ignore case if search contains caps
 vim.opt.smartcase = true
@@ -46,6 +50,16 @@ require 'tokyonight'.setup {
     }
 }
 vim.cmd.colorscheme 'tokyonight-night'
+
+-- Animated scrolling
+local animate = require 'mini.animate';
+animate.setup {
+    cursor = { enable = false },
+    scroll = { enable = true, timing = animate.gen_timing.linear { easing = "in-out", duration = 12 } },
+    resize = { enable = true },
+    open = { enable = true },
+    close = { enable = true }
+}
 
 -- Make the middle section's background transparent
 local lualine_theme = require 'lualine.themes.auto'
@@ -138,6 +152,7 @@ local cmp_cap = require 'cmp_nvim_lsp'.default_capabilities()
 cmp_cap.textDocument.completion.completionItem.snippetSupport = true
 
 lsp.bashls.setup { capabilities = cmp_cap }
+lsp.clangd.setup { capabilities = cmp_cap }
 lsp.cssls.setup { capabilities = cmp_cap }
 lsp.eslint.setup { capabilities = cmp_cap }
 lsp.gopls.setup { capabilities = cmp_cap }
