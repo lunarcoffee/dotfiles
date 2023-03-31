@@ -5,3 +5,4 @@ key_left=Control_L-h
 key_right=Control_L-l
 dynamic_lines=true
 key_expand=Control_L-l
+term=kitty
